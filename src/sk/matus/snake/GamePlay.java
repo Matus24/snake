@@ -1,6 +1,7 @@
 package sk.matus.snake;
 
 import sk.matus.snake.enums.DirectionSnake;
+import sk.matus.snake.objects.Snake;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,11 +16,15 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
     private int xPositionMove = 0;
     private int yPositionMove = 0;
     private DirectionSnake directionSnake = DirectionSnake.UP;
-    private boolean left = false;
-    private boolean right = false;
+
+    private Snake snake;
+
+    private boolean horizontMoveActive = false;
+    private boolean verticalMoveActive = false;
 
     public GamePlay() {
-        int delay = 6;
+        int delay = 70;
+        snake = new Snake();
         timer = new Timer(delay,this);
         timer.start();
         addKeyListener(this);
@@ -33,14 +38,14 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 
         g.setColor(Color.black);
         g.fillRect(0,0,600,600);
-        g.setColor(Color.green);
-        g.fillRect(200-xPositionMove,500-yPositionMove,20,20);
+        snake.snakePaint(g);
         g.dispose();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         yPositionMove = yPositionMove + 5;
+        snake.snakeMove();
         requestFocus();
         timer.start();
         repaint();
@@ -54,20 +59,30 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_KP_UP) {
-            directionSnake = DirectionSnake.UP;
+        if(e.getKeyCode() == KeyEvent.VK_UP && !verticalMoveActive) {
+            snake.direction(DirectionSnake.UP);
+            verticalMoveActive = true;
+            horizontMoveActive = false;
         }
-        if(e.getKeyCode() == KeyEvent.VK_KP_DOWN){
-            directionSnake = DirectionSnake.DOWN;
+        if(e.getKeyCode() == KeyEvent.VK_DOWN && !verticalMoveActive){
+            snake.direction(DirectionSnake.DOWN);
+            verticalMoveActive = true;
+            horizontMoveActive = false;
         }
-        if(e.getKeyCode() == KeyEvent.VK_LEFT){
-            directionSnake = DirectionSnake.LEFT;
+        if(e.getKeyCode() == KeyEvent.VK_LEFT && !horizontMoveActive){
+            snake.direction(DirectionSnake.LEFT);
+            horizontMoveActive = true;
+            verticalMoveActive = false;
         }
-        if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-            directionSnake = DirectionSnake.RIGHT;
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT && !horizontMoveActive){
+            snake.direction(DirectionSnake.RIGHT);
+            horizontMoveActive = true;
+            verticalMoveActive = false;
         }
 
     }
+
+
 
     @Override
     public void keyReleased(KeyEvent e) {
