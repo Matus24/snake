@@ -68,7 +68,7 @@ public class Snake {
             for(int i = 2; i <= score; i++){
                 g.fillRect(snake[i][0],snake[i][1],20,20);
             }
-            for (int i = 2; i <= score; i++) {
+            for (int i = score; i >= 2; i--) {
                 g.fillRect(snake[i][0],snake[i][1],20,20);
                 snake[i][0] = snake[i - 1][0];
                 snake[i][1] = snake[i - 1][1];
@@ -91,24 +91,24 @@ public class Snake {
                 if (directionSnakes[score - 1] == DirectionSnake.DOWN) {
                     System.out.println("down");
                     snake[score][0] = snake[score-1][0];
-                    snake[score][1] = snake[score - 1][1] - 22;
+                    snake[score][1] = snake[score - 1][1] - 20;
                     directionSnakes[score] = directionSnakes[score - 1];
                 }
                 if (directionSnakes[score - 1] == DirectionSnake.UP) {
                     System.out.println("up");
                     snake[score][0] = snake[score-1][0];
-                    snake[score][1] = snake[score - 1][1] + 22;
+                    snake[score][1] = snake[score - 1][1] + 20;
                     directionSnakes[score] = directionSnakes[score - 1];
                 }
                 if (directionSnakes[score - 1] == DirectionSnake.LEFT) {
                     System.out.println("left");
-                    snake[score][0] = snake[score -1][0] + 22;
+                    snake[score][0] = snake[score -1][0] + 20;
                     snake[score][1] = snake[score - 1][1];
                     directionSnakes[score] = directionSnakes[score - 1];
                 }
                 if (directionSnakes[score - 1] == DirectionSnake.RIGHT) {
                     System.out.println("right");
-                    snake[score][0] = snake[score - 1][0] - 22;
+                    snake[score][0] = snake[score - 1][0] - 20;
                     snake[score][1] = snake[score - 1][1];
                     directionSnakes[score] = directionSnakes[score - 1];
                 }

@@ -25,7 +25,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
     private boolean verticalMoveActive = false;
 
     public GamePlay() {
-        int delay = 300;
+        int delay = 150;
         snake = new Snake();
         point = new Point();
         timer = new Timer(delay,this);
