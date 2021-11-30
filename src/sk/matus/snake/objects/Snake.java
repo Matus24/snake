@@ -60,15 +60,9 @@ public class Snake {
         snake[1][1] = snakeOldY;
         directionSnakes[1] = directionOld;
         g.fillRect(snake[0][0],snake[0][1],20,20);
-        if(score >= 1) {
-            g.fillRect(snake[1][0], snake[1][1], 20, 20);
-        }
 
-        if(score >= 2) {
-            for(int i = 2; i <= score; i++){
-                g.fillRect(snake[i][0],snake[i][1],20,20);
-            }
-            for (int i = score; i >= 2; i--) {
+        if(score >= 1) {
+            for (int i = score; i >= 1; i--) {
                 g.fillRect(snake[i][0],snake[i][1],20,20);
                 snake[i][0] = snake[i - 1][0];
                 snake[i][1] = snake[i - 1][1];
@@ -76,9 +70,19 @@ public class Snake {
             }
 
         }
+        checkColisionBody();
         snakeOldX = snake[0][0];
         snakeOldY = snake[0][1];
         directionOld = directionSnakes[0];
+
+    }
+
+    private void checkColisionBody(){
+        for(int i = 2; i <= score; i++){
+            if(snake[0][0] == snake[i][0] && snake[0][1] == snake[i][1]){
+                System.out.println("gameover");
+            }
+        }
     }
 
     public void pointPosition(int x, int y){
@@ -87,8 +91,11 @@ public class Snake {
         if(new Rectangle(pointX, pointY, 20, 20).intersects(snake[0][0],snake[0][1], 20,20)){
             score++;
             System.out.println(score);
+
             if(score >= 2) {
+
                 if (directionSnakes[score - 1] == DirectionSnake.DOWN) {
+
                     System.out.println("down");
                     snake[score][0] = snake[score-1][0];
                     snake[score][1] = snake[score - 1][1] - 20;
