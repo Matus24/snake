@@ -1,6 +1,7 @@
 package sk.matus.snake;
 
 import sk.matus.snake.enums.DirectionSnake;
+import sk.matus.snake.objects.Point;
 import sk.matus.snake.objects.Snake;
 
 import javax.swing.*;
@@ -18,13 +19,15 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
     private DirectionSnake directionSnake = DirectionSnake.UP;
 
     private Snake snake;
+    private Point point;
 
     private boolean horizontMoveActive = false;
     private boolean verticalMoveActive = false;
 
     public GamePlay() {
-        int delay = 70;
+        int delay = 300;
         snake = new Snake();
+        point = new Point();
         timer = new Timer(delay,this);
         timer.start();
         addKeyListener(this);
@@ -39,6 +42,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
         g.setColor(Color.black);
         g.fillRect(0,0,600,600);
         snake.snakePaint(g);
+        point.pointPaint(g);
+
         g.dispose();
     }
 
@@ -46,10 +51,11 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
         yPositionMove = yPositionMove + 5;
         snake.snakeMove();
+        snake.pointPosition(point.getPointX(),point.getPointY());
+        point.snakePosition(snake.getSnakeX(),snake.getSnakeY());
         requestFocus();
         timer.start();
         repaint();
-        System.out.println(directionSnake);
     }
 
     @Override
