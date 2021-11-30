@@ -5,22 +5,20 @@ import sk.matus.snake.enums.DirectionSnake;
 import java.awt.*;
 
 public class Snake {
-    private DirectionSnake direction;
-    private int[][] snake = new int[300][2];
-    private DirectionSnake[] directionSnakes = new DirectionSnake[300];
+    private DirectionSnake direction = DirectionSnake.UP;
+    private final int[][] snake = new int[300][2];
+    private final DirectionSnake[] directionSnakes = new DirectionSnake[300];
     private DirectionSnake directionOld = DirectionSnake.UP;
-    private int snakeX = 300;
-    private int snakeY = 300;
     private int snakeOldX = 0;
     private int snakeOldY = 0;
     private int score = 0;
-    private int iterator = 0;
-    private int pointX = 0;
-    private int pointY = 0;
+
+    private boolean gameOver = false;
 
     public Snake() {
-        snake[0][0] = snakeX;
-        snake[0][1] = snakeY;
+        //start position
+        snake[0][0] = 300;
+        snake[0][1] = 300;
     }
 
     public void direction(DirectionSnake direction){
@@ -59,8 +57,10 @@ public class Snake {
         snake[1][0] = snakeOldX;
         snake[1][1] = snakeOldY;
         directionSnakes[1] = directionOld;
+        //paint snake had
         g.fillRect(snake[0][0],snake[0][1],20,20);
 
+        //paint snake body
         if(score >= 1) {
             for (int i = score; i >= 1; i--) {
                 g.fillRect(snake[i][0],snake[i][1],20,20);
@@ -70,57 +70,61 @@ public class Snake {
             }
 
         }
-        checkColisionBody();
+        checkCollisionBody();
         snakeOldX = snake[0][0];
         snakeOldY = snake[0][1];
         directionOld = directionSnakes[0];
 
     }
 
-    private void checkColisionBody(){
+    private void checkCollisionBody(){
         for(int i = 2; i <= score; i++){
             if(snake[0][0] == snake[i][0] && snake[0][1] == snake[i][1]){
-                System.out.println("gameover");
+                gameOver = true;
             }
         }
-    }
+        if(snake[0][0] < 0 || snake[0][1] < 0 || snake[0][0] > 600 || snake[0][1] > 600){
+            System.out.println("game");
+            gameOver = true;
+        }
+     }
 
-    public void pointPosition(int x, int y){
-        pointX = x;
-        pointY = y;
+    public void pointPosition(int pointX, int pointY){
+        //check collision snake with point
         if(new Rectangle(pointX, pointY, 20, 20).intersects(snake[0][0],snake[0][1], 20,20)){
             score++;
-            System.out.println(score);
-
+            //add new part body snake
             if(score >= 2) {
-
                 if (directionSnakes[score - 1] == DirectionSnake.DOWN) {
-
-                    System.out.println("down");
                     snake[score][0] = snake[score-1][0];
                     snake[score][1] = snake[score - 1][1] - 20;
                     directionSnakes[score] = directionSnakes[score - 1];
                 }
                 if (directionSnakes[score - 1] == DirectionSnake.UP) {
-                    System.out.println("up");
                     snake[score][0] = snake[score-1][0];
                     snake[score][1] = snake[score - 1][1] + 20;
                     directionSnakes[score] = directionSnakes[score - 1];
                 }
                 if (directionSnakes[score - 1] == DirectionSnake.LEFT) {
-                    System.out.println("left");
                     snake[score][0] = snake[score -1][0] + 20;
                     snake[score][1] = snake[score - 1][1];
                     directionSnakes[score] = directionSnakes[score - 1];
                 }
                 if (directionSnakes[score - 1] == DirectionSnake.RIGHT) {
-                    System.out.println("right");
                     snake[score][0] = snake[score - 1][0] - 20;
                     snake[score][1] = snake[score - 1][1];
                     directionSnakes[score] = directionSnakes[score - 1];
                 }
             }
         }
+    }
+
+    public boolean isGameOver(){
+        return gameOver;
+    }
+
+    public int getScore(){
+        return score;
     }
 
 }

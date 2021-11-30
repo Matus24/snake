@@ -1,8 +1,11 @@
 package sk.matus.snake;
 
 import sk.matus.snake.enums.DirectionSnake;
+import sk.matus.snake.enums.Screen;
 import sk.matus.snake.objects.Point;
 import sk.matus.snake.objects.Snake;
+import sk.matus.snake.screen.GameOverScreen;
+import sk.matus.snake.screen.MenuScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,18 +17,24 @@ import java.awt.event.KeyListener;
 public class GamePlay extends JPanel implements KeyListener, ActionListener {
 
     private final Timer timer;
-    private int xPositionMove = 0;
     private int yPositionMove = 0;
-    private DirectionSnake directionSnake = DirectionSnake.UP;
+
+    private Screen screenActive;
+
+    private final MenuScreen menu;
+    private  final GameOverScreen gameOverScreen;
 
     private Snake snake;
     private Point point;
 
-    private boolean horizontMoveActive = false;
+    private boolean horizontalMoveActive = false;
     private boolean verticalMoveActive = false;
 
     public GamePlay() {
         int delay = 150;
+        screenActive = Screen.MENU;
+        menu = new MenuScreen();
+        gameOverScreen = new GameOverScreen();
         snake = new Snake();
         point = new Point();
         timer = new Timer(delay,this);
@@ -36,23 +45,47 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 
     }
 
-    int i = 0;
     public void paint(Graphics g){
-
+        //set background color
         g.setColor(Color.black);
         g.fillRect(0,0,600,600);
-        snake.snakePaint(g);
-        point.pointPaint(g);
+
+        //menu screen active
+        if(screenActive == Screen.MENU){
+            menu.menuPaint(g);
+        }
+
+        //gameplay active
+        if(screenActive == Screen.PLAY) {
+            snake.snakePaint(g);
+            point.pointPaint(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(Color.cyan);
+            g.setFont(new Font("Serif",Font.BOLD,30));
+            g2d.drawString(String.valueOf(snake.getScore()), 280,40);
+        }
+
+        //game over screen active
+        if(screenActive == Screen.GAMEOVER){
+            gameOverScreen.gameOverPaint(g, snake.getScore());
+        }
 
         g.dispose();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        yPositionMove = yPositionMove + 5;
-        snake.snakeMove();
-        snake.pointPosition(point.getPointX(),point.getPointY());
-        point.snakePosition(snake.getSnakeX(),snake.getSnakeY());
+        if(screenActive == Screen.PLAY) {
+            yPositionMove = yPositionMove + 5;
+            snake.snakeMove();
+            snake.pointPosition(point.getPointX(), point.getPointY());
+            point.snakePosition(snake.getSnakeX(), snake.getSnakeY());
+        }
+
+        if(snake.isGameOver()){
+            screenActive = Screen.GAMEOVER;
+        }
+
         requestFocus();
         timer.start();
         repaint();
@@ -68,25 +101,40 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
         if(e.getKeyCode() == KeyEvent.VK_UP && !verticalMoveActive) {
             snake.direction(DirectionSnake.UP);
             verticalMoveActive = true;
-            horizontMoveActive = false;
+            horizontalMoveActive = false;
         }
+
         if(e.getKeyCode() == KeyEvent.VK_DOWN && !verticalMoveActive){
             snake.direction(DirectionSnake.DOWN);
             verticalMoveActive = true;
-            horizontMoveActive = false;
+            horizontalMoveActive = false;
         }
-        if(e.getKeyCode() == KeyEvent.VK_LEFT && !horizontMoveActive){
+
+        if(e.getKeyCode() == KeyEvent.VK_LEFT && !horizontalMoveActive){
             snake.direction(DirectionSnake.LEFT);
-            horizontMoveActive = true;
-            verticalMoveActive = false;
-        }
-        if(e.getKeyCode() == KeyEvent.VK_RIGHT && !horizontMoveActive){
-            snake.direction(DirectionSnake.RIGHT);
-            horizontMoveActive = true;
+            horizontalMoveActive = true;
             verticalMoveActive = false;
         }
 
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT && !horizontalMoveActive){
+            snake.direction(DirectionSnake.RIGHT);
+            horizontalMoveActive = true;
+            verticalMoveActive = false;
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_SPACE && screenActive == Screen.MENU){
+            screenActive = Screen.PLAY;
+        }
+
+        if(e.getKeyCode() == KeyEvent.VK_SPACE && screenActive == Screen.GAMEOVER){
+            screenActive =  Screen.PLAY;
+            snake = new Snake();
+            point = new Point();
+        }
+
     }
+
+
 
 
 
